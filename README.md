@@ -165,3 +165,241 @@ MIT License - 詳細は [LICENSE](LICENSE) ファイルを参照
 ## 📧 お問い合わせ
 
 プロジェクトについての質問や提案は Issue または Pull Request にてお願いします。
+
+# 🌟 一日一善アプリ
+
+毎日小さな善行を積み重ねて、より良い自分と社会を築くためのアプリケーションです。
+
+## 🏗️ アーキテクチャ
+
+- **フロントエンド**: Next.js 15 + React 19 + TypeScript
+- **認証**: Firebase Auth（Google/Apple/匿名ログイン対応）
+- **状態管理**: Zustand + React Query
+- **データベース**: Firestore + PostgreSQL + Redis
+- **インフラ**: Vercel + マルチリージョン対応
+- **UIライブラリ**: Tailwind CSS + Radix UI
+
+## 🚀 セットアップ手順
+
+### 1. リポジトリのクローン
+```bash
+git clone https://github.com/your-username/ichizen-app.git
+cd ichizen-app
+```
+
+### 2. 依存関係のインストール
+```bash
+pnpm install
+```
+
+### 3. Firebase プロジェクトの作成・設定
+
+#### 3.1 Firebase Console でプロジェクト作成
+1. [Firebase Console](https://console.firebase.google.com/) にアクセス
+2. 「プロジェクトを追加」をクリック
+3. プロジェクト名: `ichizen-app` （お好みで変更可能）
+4. Analytics を有効化（推奨）
+
+#### 3.2 Authentication の設定
+1. Firebase Console で「Authentication」を選択
+2. 「Sign-in method」タブで以下を有効化：
+   - **メール/パスワード** ✅
+   - **Google** ✅（Google OAuth 2.0 設定）
+   - **匿名** ✅
+
+#### 3.3 Firestore Database の設定
+1. Firebase Console で「Firestore Database」を選択
+2. 「データベースを作成」をクリック
+3. 「テストモードで開始」を選択（開発環境）
+4. ロケーション: `asia-northeast1` (東京) を選択
+
+#### 3.4 Firebase設定の取得
+1. Firebase Console でプロジェクト設定（⚙️マーク）に移動
+2. 「全般」タブで「アプリを追加」 → 「ウェブ」を選択
+3. アプリ名: `ichizen-web-app`
+4. 設定情報をコピー
+
+### 4. 環境変数の設定
+
+`.env.local` ファイルを作成し、Firebase設定を追加：
+
+```bash
+# Firebase認証設定
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
+
+# 開発環境設定
+NODE_ENV=development
+```
+
+### 5. アプリケーションの起動
+```bash
+pnpm dev
+```
+
+http://localhost:3000 でアプリケーションが起動します。
+
+## 🔐 認証機能の使い方（フロントエンド開発者向け）
+
+### 基本的な認証フック
+```typescript
+import { useAuth } from '@/hooks/useAuth';
+
+function LoginComponent() {
+  const { 
+    loginWithEmail, 
+    loginWithGoogle, 
+    loginAnonymously,
+    isLoading, 
+    error 
+  } = useAuth();
+
+  const handleEmailLogin = async (email: string, password: string) => {
+    const success = await loginWithEmail({ email, password, rememberMe: true });
+    if (success) {
+      // ログイン成功時の処理
+    }
+  };
+
+  return (
+    <div>
+      {isLoading && <p>ログイン中...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      {/* ログインフォーム */}
+    </div>
+  );
+}
+```
+
+### 認証が必要なページ
+```typescript
+import { useRequireAuth } from '@/hooks/useAuth';
+
+function DashboardPage() {
+  const { shouldShowContent, isLoading } = useRequireAuth();
+
+  if (isLoading) return <div>読み込み中...</div>;
+  if (!shouldShowContent) return null; // リダイレクト中
+
+  return (
+    <div>
+      {/* 認証済みユーザーのみ表示 */}
+    </div>
+  );
+}
+```
+
+### ユーザー情報の取得
+```typescript
+import { useUser } from '@/stores/authStore';
+
+function UserProfile() {
+  const user = useUser();
+
+  return (
+    <div>
+      <h1>こんにちは、{user?.name || user?.email}さん！</h1>
+      <p>最後のログイン: {user?.lastLoginAt.toLocaleDateString()}</p>
+    </div>
+  );
+}
+```
+
+## 📁 プロジェクト構造
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # 認証関連ページ
+│   ├── (protected)/       # 認証必須ページ
+│   └── layout.tsx         # ルートレイアウト
+├── components/            # Reactコンポーネント
+│   ├── auth/              # 認証関連コンポーネント
+│   └── ui/                # 基本UIコンポーネント
+├── hooks/                 # カスタムフック
+│   └── useAuth.ts         # 認証フック
+├── stores/                # 状態管理（Zustand）
+│   └── authStore.ts       # 認証状態
+├── lib/                   # ユーティリティ
+│   ├── firebase.ts        # Firebase設定
+│   └── auth.ts            # 認証サービス
+├── types/                 # TypeScript型定義
+│   └── auth.ts            # 認証関連型
+└── config/                # 設定ファイル
+    └── firebase.ts        # Firebase設定
+```
+
+## 🛠️ 開発コマンド
+
+```bash
+# 開発サーバー起動
+pnpm dev
+
+# 本番ビルド
+pnpm build
+
+# リンター実行
+pnpm lint
+
+# 型チェック
+pnpm type-check
+
+# テスト実行（将来実装）
+pnpm test
+```
+
+## 📝 実装状況
+
+### ✅ Phase 1: 基盤構築（完了）
+- [x] Next.js 15 + React 19 セットアップ
+- [x] TypeScript設定
+- [x] Tailwind CSS設定
+- [x] マルチデータベース設計
+- [x] インフラ設計
+
+### 🔄 Phase 2: 認証・セキュリティ（実装中）
+- [x] Firebase Auth設定
+- [x] 認証状態管理（Zustand）
+- [x] 認証フック実装
+- [ ] 認証UI作成
+- [ ] セキュリティ強化
+- [ ] テスト実装
+
+### ⏳ Phase 3: コア機能（予定）
+- [ ] 善行テンプレート機能
+- [ ] 活動記録機能
+- [ ] カレンダー表示
+- [ ] 通知システム
+
+### ⏳ Phase 4: 高度な機能（予定）
+- [ ] バッジシステム
+- [ ] ストリーク機能
+- [ ] 統計・分析
+- [ ] コミュニティ機能
+
+## 🔧 トラブルシューティング
+
+### Firebase接続エラー
+```bash
+# Firebase設定が正しいか確認
+console.log(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+```
+
+### 認証状態が保持されない
+- ブラウザのローカルストレージを確認
+- Firebase設定の `authDomain` が正しいか確認
+
+## 📚 参考資料
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Firebase Auth Documentation](https://firebase.google.com/docs/auth)
+- [Zustand Documentation](https://zustand-demo.pmnd.rs/)
+- [React Query Documentation](https://tanstack.com/query)
+
+---
+
+**🌟 より良い世界を一日一善で築いていきましょう！**

@@ -1,0 +1,253 @@
+import { useEffect, useCallback, useState, useMemo } from 'react';
+import { useAuthStore, useIsAuthenticated, useAuthLoading, useAuthError } from '@/stores/authStore';
+import { authService } from '@/lib/auth';
+import { LoginFormData, RegisterFormData, AuthProvider } from '@/types/auth';
+import { authConfig } from '@/config/firebase';
+
+/**
+ * 認証フック - メインの認証機能を提供
+ */
+export function useAuth() {
+  const [isClient, setIsClient] = useState<boolean>(false);
+  const isAuthenticated = useIsAuthenticated();
+  const isLoading = useAuthLoading();
+  const error = useAuthError();
+
+  // アクションを直接Zustandから取得（無限ループ回避）
+  const setUser = useAuthStore(state => state.setUser);
+  const setLoading = useAuthStore(state => state.setLoading);
+  const setError = useAuthStore(state => state.setError);
+  const login = useAuthStore(state => state.login);
+  const logout = useAuthStore(state => state.logout);
+  const clearError = useAuthStore(state => state.clearError);
+
+  // クライアントサイドでのみ実行
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Firebase認証状態の監視（クライアントサイドのみ）
+  useEffect(() => {
+    if (!isClient) return;
+
+    const unsubscribe = authService.onAuthStateChange((user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [isClient, setUser, setLoading]);
+
+  // Zustandストアの手動ハイドレーション（クライアントサイドのみ）
+  useEffect(() => {
+    if (!isClient) return;
+    
+    const store = useAuthStore.getState();
+    if (useAuthStore.persist?.hasHydrated && !useAuthStore.persist.hasHydrated()) {
+      useAuthStore.persist.rehydrate();
+    }
+  }, [isClient]);
+
+  // ログイン関数（メール）
+  const loginWithEmail = useCallback(async (data: LoginFormData): Promise<boolean> => {
+    if (!isClient) return false;
+    
+    try {
+      setLoading(true);
+      clearError();
+      
+      const result = await authService.loginWithEmail(data);
+      login(result);
+      
+      return true;
+    } catch (error: any) {
+      setError(error.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [isClient, setLoading, clearError, login, setError]);
+
+  // 登録関数（メール）
+  const registerWithEmail = useCallback(async (data: RegisterFormData): Promise<boolean> => {
+    if (!isClient) return false;
+    
+    try {
+      setLoading(true);
+      clearError();
+      
+      const result = await authService.registerWithEmail(data);
+      login(result);
+      
+      return true;
+    } catch (error: any) {
+      setError(error.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [isClient, setLoading, clearError, login, setError]);
+
+  // Googleログイン
+  const loginWithGoogle = useCallback(async (): Promise<boolean> => {
+    if (!isClient) return false;
+    
+    try {
+      setLoading(true);
+      clearError();
+      
+      const result = await authService.loginWithGoogle();
+      login(result);
+      
+      return true;
+    } catch (error: any) {
+      setError(error.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [isClient, setLoading, clearError, login, setError]);
+
+  // 匿名ログイン
+  const loginAnonymously = useCallback(async (): Promise<boolean> => {
+    if (!isClient) return false;
+    
+    try {
+      setLoading(true);
+      clearError();
+      
+      const result = await authService.loginAnonymously();
+      login(result);
+      
+      return true;
+    } catch (error: any) {
+      setError(error.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [isClient, setLoading, clearError, login, setError]);
+
+  // ログアウト
+  const logoutUser = useCallback(async (): Promise<boolean> => {
+    if (!isClient) return false;
+    
+    try {
+      setLoading(true);
+      
+      await authService.logout();
+      logout();
+      
+      return true;
+    } catch (error: any) {
+      setError(error.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [isClient, setLoading, logout, setError]);
+
+  // パスワードリセット
+  const sendPasswordReset = useCallback(async (email: string): Promise<boolean> => {
+    if (!isClient) return false;
+    
+    try {
+      setLoading(true);
+      clearError();
+      
+      await authService.sendPasswordReset(email);
+      
+      return true;
+    } catch (error: any) {
+      setError(error.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [isClient, setLoading, clearError, setError]);
+
+  return {
+    // 状態
+    isAuthenticated: isClient ? isAuthenticated : false,
+    isLoading: isClient ? isLoading : true,
+    error: isClient ? error : null,
+    
+    // アクション
+    loginWithEmail,
+    registerWithEmail,
+    loginWithGoogle,
+    loginAnonymously,
+    logout: logoutUser,
+    sendPasswordReset,
+    clearError,
+  };
+}
+
+/**
+ * 認証が必要なページで使用するフック
+ */
+export function useRequireAuth() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      // 未認証の場合はログインページにリダイレクト
+      window.location.href = '/login';
+    }
+  }, [isAuthenticated, isLoading]);
+
+  return {
+    isAuthenticated,
+    isLoading,
+    shouldShowContent: isAuthenticated && !isLoading,
+  };
+}
+
+/**
+ * ログイン済みユーザーをトップページにリダイレクトするフック
+ */
+export function useRedirectIfAuthenticated() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      // 認証済みの場合はダッシュボードにリダイレクト
+      window.location.href = authConfig.redirects.afterSignIn;
+    }
+  }, [isAuthenticated, isLoading]);
+
+  return {
+    isAuthenticated,
+    isLoading,
+    shouldShowContent: !isAuthenticated && !isLoading,
+  };
+}
+
+/**
+ * 認証プロバイダーの可用性をチェックするフック
+ */
+export function useAuthProviders() {
+  return {
+    email: authConfig.providers.email.enabled,
+    google: authConfig.providers.google.enabled,
+    apple: authConfig.providers.apple.enabled,
+    anonymous: authConfig.providers.anonymous.enabled,
+  };
+}
+
+/**
+ * 認証トークンを取得するフック
+ */
+export function useAuthToken() {
+  const getAuthToken = useAuthStore(state => state.getAuthToken);
+  
+  const getToken = useCallback(async (): Promise<string | null> => {
+    return await getAuthToken();
+  }, [getAuthToken]);
+
+  return {
+    getToken,
+  };
+} 

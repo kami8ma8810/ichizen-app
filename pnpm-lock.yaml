@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@hookform/resolvers':
-        specifier: ^3.9.1
+        specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.56.4(react@19.1.0))
       '@prisma/client':
         specifier: ^6.1.0
@@ -21,7 +21,7 @@ importers:
         specifier: ^1.2.2
         version: 1.2.14(@types/react-dom@19.1.5(@types/react@19.1.6))(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tanstack/react-query':
-        specifier: ^5.59.0
+        specifier: ^5.79.0
         version: 5.79.0(react@19.1.0)
       class-variance-authority:
         specifier: ^0.7.1
@@ -33,11 +33,14 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       firebase:
-        specifier: ^11.1.0
+        specifier: ^11.8.1
         version: 11.8.1
       firebase-admin:
         specifier: ^13.0.0
         version: 13.4.0
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
       lucide-react:
         specifier: ^0.453.0
         version: 0.453.0(react@19.1.0)
@@ -51,7 +54,7 @@ importers:
         specifier: ^19.0.0
         version: 19.1.0(react@19.1.0)
       react-hook-form:
-        specifier: ^7.53.2
+        specifier: ^7.56.4
         version: 7.56.4(react@19.1.0)
       redis:
         specifier: ^4.7.0
@@ -59,12 +62,15 @@ importers:
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.6.0
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.17)
       zod:
-        specifier: ^3.23.8
+        specifier: ^3.25.45
         version: 3.25.45
       zustand:
-        specifier: ^5.0.0
-        version: 5.0.5(@types/react@19.1.6)(react@19.1.0)
+        specifier: ^5.0.5
+        version: 5.0.5(@types/react@19.1.6)(immer@10.1.1)(react@19.1.0)
     devDependencies:
       '@next/bundle-analyzer':
         specifier: ^15.1.0
@@ -2468,6 +2474,9 @@ packages:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
 
+  immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
     engines: {node: '>=6'}
@@ -3475,6 +3484,11 @@ packages:
 
   tailwind-merge@2.6.0:
     resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==}
+
+  tailwindcss-animate@1.0.7:
+    resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
 
   tailwindcss@3.4.17:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
@@ -6401,6 +6415,8 @@ snapshots:
 
   ignore@7.0.5: {}
 
+  immer@10.1.1: {}
+
   import-fresh@3.3.1:
     dependencies:
       parent-module: 1.0.1
@@ -7501,6 +7517,10 @@ snapshots:
 
   tailwind-merge@2.6.0: {}
 
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.17):
+    dependencies:
+      tailwindcss: 3.4.17
+
   tailwindcss@3.4.17:
     dependencies:
       '@alloc/quick-lru': 5.2.0
@@ -7872,7 +7892,8 @@ snapshots:
 
   zod@3.25.45: {}
 
-  zustand@5.0.5(@types/react@19.1.6)(react@19.1.0):
+  zustand@5.0.5(@types/react@19.1.6)(immer@10.1.1)(react@19.1.0):
     optionalDependencies:
       '@types/react': 19.1.6
+      immer: 10.1.1
       react: 19.1.0
