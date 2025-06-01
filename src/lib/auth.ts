@@ -1,16 +1,17 @@
 import {
-  getFirebaseAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
   signInAnonymously,
   signOut,
+  sendPasswordResetEmail,
+  sendEmailVerification,
+  updateProfile,
   onAuthStateChanged,
   GoogleAuthProvider,
-  sendPasswordResetEmail,
-  updateProfile,
-  type FirebaseUser
-} from '@/lib/firebase';
+  type User as FirebaseUser
+} from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase';
 import { 
   User, 
   AuthResult, 
@@ -85,6 +86,9 @@ export class AuthService {
           displayName: data.name,
         });
       }
+
+      // メール認証を送信
+      await sendEmailVerification(userCredential.user);
 
       const user = mapFirebaseUser(userCredential.user);
       

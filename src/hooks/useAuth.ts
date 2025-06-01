@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore, useIsAuthenticated, useAuthLoading, useAuthError } from '@/stores/authStore';
 import { authService } from '@/lib/auth';
 import { LoginFormData, RegisterFormData, AuthProvider } from '@/types/auth';
@@ -189,39 +190,53 @@ export function useAuth() {
  * 認証が必要なページで使用するフック
  */
 export function useRequireAuth() {
+  const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      // 未認証の場合はログインページにリダイレクト
-      window.location.href = '/login';
+    // 初回チェック時のみリダイレクト処理を実行
+    if (!isLoading && !isChecked) {
+      setIsChecked(true);
+      
+      if (!isAuthenticated) {
+        // 未認証の場合はログインページにリダイレクト
+        router.push('/auth/login');
+      }
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, isChecked, router]);
 
   return {
     isAuthenticated,
     isLoading,
-    shouldShowContent: isAuthenticated && !isLoading,
+    shouldShowContent: isAuthenticated && !isLoading && isChecked,
   };
 }
 
 /**
- * ログイン済みユーザーをトップページにリダイレクトするフック
+ * ログイン済みユーザーをダッシュボードにリダイレクトするフック
  */
 export function useRedirectIfAuthenticated() {
+  const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      // 認証済みの場合はダッシュボードにリダイレクト
-      window.location.href = authConfig.redirects.afterSignIn;
+    // 初回チェック時のみリダイレクト処理を実行
+    if (!isLoading && !isChecked) {
+      setIsChecked(true);
+      
+      if (isAuthenticated) {
+        // 認証済みの場合はダッシュボードにリダイレクト
+        router.push(authConfig.redirects.afterSignIn);
+      }
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, isChecked, router]);
 
   return {
     isAuthenticated,
     isLoading,
-    shouldShowContent: !isAuthenticated && !isLoading,
+    shouldShowContent: !isAuthenticated && !isLoading && isChecked,
   };
 }
 

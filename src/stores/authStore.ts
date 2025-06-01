@@ -28,7 +28,7 @@ export const useAuthStore = create<AuthStore>()(
     immer((set, get) => ({
       // 初期状態
       user: null,
-      isLoading: false,
+      isLoading: true, // 初期状態では認証チェック中
       isAuthenticated: false,
       error: null,
 

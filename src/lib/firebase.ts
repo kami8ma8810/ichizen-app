@@ -150,6 +150,7 @@ export {
   GoogleAuthProvider,
   OAuthProvider,
   sendPasswordResetEmail,
+  sendEmailVerification,
   updateProfile
 } from 'firebase/auth';
 
