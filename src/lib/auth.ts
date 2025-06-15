@@ -21,6 +21,7 @@ import {
   mapFirebaseUser 
 } from '@/types/auth';
 import { authConfig } from '@/config/firebase';
+import { getGoogleAuthConfig, logDevelopmentInfo } from './firebase-dev';
 
 /**
  * 認証サービスクラス
@@ -106,11 +107,22 @@ export class AuthService {
    */
   async loginWithGoogle(): Promise<AuthResult> {
     try {
+      // 開発環境の情報をログ出力
+      if (process.env.NODE_ENV === 'development') {
+        logDevelopmentInfo();
+      }
+
       const provider = new GoogleAuthProvider();
       // Google認証のスコープ設定
       authConfig.providers.google.scopes.forEach(scope => {
         provider.addScope(scope);
       });
+
+      // 開発環境用の追加設定
+      const googleConfig = getGoogleAuthConfig();
+      if (googleConfig.customParameters) {
+        provider.setCustomParameters(googleConfig.customParameters);
+      }
 
       const userCredential = await signInWithPopup(this.auth, provider);
       const user = mapFirebaseUser(userCredential.user);

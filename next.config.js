@@ -37,6 +37,8 @@ const nextConfig = {
 
   // セキュリティヘッダー
   async headers() {
+    const isDevelopment = process.env.NODE_ENV === 'development'
+    
     return [
       {
         source: '/(.*)',
@@ -67,14 +69,24 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: [
+            value: isDevelopment ? [
+              // 開発環境用（緩い設定）
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google-analytics.com",
-              "style-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://apis.google.com https://www.google-analytics.com https://accounts.google.com",
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: https: blob:",
-              "font-src 'self' data:",
-              "connect-src 'self' https://api.ichizen-app.com https://*.firebaseio.com https://*.googleapis.com",
-              "frame-src 'none'",
+              "font-src 'self' data: https://fonts.gstatic.com",
+              "connect-src 'self' https://api.ichizen-app.com https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://securetoken.googleapis.com",
+              "frame-src 'self' https://accounts.google.com https://*.firebaseapp.com",
+            ].join('; ') : [
+              // 本番環境用（厳しい設定）
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://apis.google.com https://www.google-analytics.com https://accounts.google.com",
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
+              "img-src 'self' data: https: blob:",
+              "font-src 'self' data: https://fonts.gstatic.com",
+              "connect-src 'self' https://api.ichizen-app.com https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com",
+              "frame-src 'self' https://accounts.google.com https://*.firebaseapp.com",
             ].join('; ')
           }
         ]

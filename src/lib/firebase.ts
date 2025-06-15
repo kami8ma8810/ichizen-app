@@ -148,7 +148,6 @@ export {
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
-  OAuthProvider,
   sendPasswordResetEmail,
   sendEmailVerification,
   updateProfile
