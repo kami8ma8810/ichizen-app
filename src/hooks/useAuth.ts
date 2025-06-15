@@ -15,7 +15,6 @@ export function useAuth() {
   const error = useAuthError();
 
   // アクションを直接Zustandから取得（無限ループ回避）
-  const setUser = useAuthStore(state => state.setUser);
   const setLoading = useAuthStore(state => state.setLoading);
   const setError = useAuthStore(state => state.setError);
   const login = useAuthStore(state => state.login);
@@ -27,29 +26,7 @@ export function useAuth() {
     setIsClient(true);
   }, []);
 
-  // Firebase認証状態の監視（クライアントサイドのみ）
-  useEffect(() => {
-    if (!isClient) return;
-
-    const unsubscribe = authService.onAuthStateChange((user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [isClient, setUser, setLoading]);
-
-  // Zustandストアの手動ハイドレーション（クライアントサイドのみ）
-  useEffect(() => {
-    if (!isClient) return;
-    
-    useAuthStore.getState();
-    if (useAuthStore.persist?.hasHydrated && !useAuthStore.persist.hasHydrated()) {
-      useAuthStore.persist.rehydrate();
-    }
-  }, [isClient]);
+  // 注意: Firebase認証状態の監視は AuthProvider で行われています
 
   // ログイン関数（メール）
   const loginWithEmail = useCallback(async (data: LoginFormData): Promise<boolean> => {

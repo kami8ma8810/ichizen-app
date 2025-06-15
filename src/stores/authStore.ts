@@ -177,10 +177,8 @@ export const useAuthStore = create<AuthStore>()(
       // ストレージからの復元時の処理
       onRehydrateStorage: () => (state) => {
         if (state && typeof window !== 'undefined') {
-          // クライアントサイドでのみ実行
-          state.refreshUser().catch((error) => {
-            console.warn('⚠️ ユーザー情報の自動リフレッシュに失敗:', error);
-          });
+          console.log('🔄 認証ストレージをハイドレーション中...');
+          // AuthProvider でFirebase認証状態を監視するため、ここでは何もしない
         }
       },
     }

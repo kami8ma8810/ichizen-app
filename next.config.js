@@ -6,7 +6,7 @@ const nextConfig = {
     // ppr: true,
     // Server Actions有効化
     serverActions: {
-      allowedOrigins: ['localhost:3000', 'ichizen-app.vercel.app']
+      allowedOrigins: ['localhost:3001', 'ichizen-app.vercel.app']
     },
     // より良い開発体験のためのTurbopack
     turbo: {
@@ -73,7 +73,7 @@ const nextConfig = {
               // 開発環境用（緩い設定）
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://apis.google.com https://www.google-analytics.com https://accounts.google.com",
-              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://api.ichizen-app.com https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://securetoken.googleapis.com",
@@ -82,7 +82,7 @@ const nextConfig = {
               // 本番環境用（厳しい設定）
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://apis.google.com https://www.google-analytics.com https://accounts.google.com",
-              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://api.ichizen-app.com https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com",

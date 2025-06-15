@@ -12,7 +12,7 @@ export async function GET() {
 
   try {
     const headersList = await headers()
-    const host = headersList.get('host') || 'localhost:3000'
+    const host = headersList.get('host') || 'localhost:3001'
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
     const url = `${protocol}://${host}`
 

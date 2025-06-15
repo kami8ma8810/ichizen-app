@@ -14,12 +14,13 @@ interface GoodDeedTemplate {
 interface Activity {
   id: string
   userId: string
-  templateId: string
+  templateId: string | null
   date: string
   status: string
   note: string | null
   mood: string | null
-  template: {
+  customTitle?: string | null
+  template?: {
     title: string
     category: string
     difficulty: string
@@ -62,7 +63,7 @@ export function useGoodDeeds(userId: string | null) {
   }
 
   // 善行を記録
-  const recordActivity = async (templateId: string, note: string, mood: string) => {
+  const recordActivity = async (templateId: string | null, note: string, mood: string, customTitle?: string) => {
     if (!userId) throw new Error('ユーザーIDが必要です')
     
     try {
@@ -80,7 +81,8 @@ export function useGoodDeeds(userId: string | null) {
           templateId,
           date: today.toISOString(),
           note: note || null,
-          mood
+          mood,
+          customTitle: customTitle || null
         })
       })
 

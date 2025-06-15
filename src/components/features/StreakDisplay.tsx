@@ -20,9 +20,9 @@ export function StreakDisplay({ userId }: StreakDisplayProps) {
 
   if (isLoading) {
     return (
-      <Card className="w-full">
+      <Card className="card-zen w-full">
         <CardContent className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-good"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-good-600" aria-label="ストリーク情報を読み込み中"></div>
         </CardContent>
       </Card>
     )
@@ -50,19 +50,19 @@ export function StreakDisplay({ userId }: StreakDisplayProps) {
       case 'active':
         return 'text-good-600'
       case 'broken':
-        return 'text-orange-600'
+        return 'text-vermillion-600'
       case 'none':
-        return 'text-gray-600'
+        return 'text-accessible-text-muted'
       default:
-        return 'text-gray-600'
+        return 'text-accessible-text-muted'
     }
   }
 
   return (
-    <Card className="w-full">
+    <Card className="card-zen w-full">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Flame className={`w-5 h-5 ${getStreakColor()}`} />
+        <CardTitle className="title-zen flex items-center gap-2">
+          <Flame className={`w-5 h-5 ${getStreakColor()}`} aria-hidden="true" />
           ストリーク
         </CardTitle>
       </CardHeader>
@@ -70,42 +70,42 @@ export function StreakDisplay({ userId }: StreakDisplayProps) {
       <CardContent className="space-y-6">
         {/* 現在のストリーク */}
         <div className="text-center">
-          <div className={`text-4xl font-bold ${getStreakColor()}`}>
+          <div className={`text-5xl font-bold ${getStreakColor()} text-shadow-zen`} aria-label={`現在のストリーク: ${currentStreak}日`}>
             {currentStreak}
           </div>
-          <div className="text-sm text-gray-600 mt-1">
+          <div className="text-sm text-accessible-text-secondary mt-2 font-medium">
             現在のストリーク
           </div>
-          <p className={`text-sm mt-2 ${getStreakColor()}`}>
+          <p className={`text-sm mt-3 ${getStreakColor()} leading-relaxed`}>
             {getStreakMessage()}
           </p>
         </div>
 
         {/* 統計 */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-center p-4 bg-zen-50 border border-zen-200 rounded-lg transition-all duration-200 hover:bg-zen-100">
             <div className="flex items-center justify-center mb-2">
-              <Trophy className="w-4 h-4 text-yellow-600" />
+              <Trophy className="w-5 h-5 text-vermillion-500" aria-hidden="true" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-accessible-text-primary mb-1" aria-label={`最長記録: ${longestStreak}日`}>
               {longestStreak}
             </div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-accessible-text-secondary font-medium">
               最長記録
             </div>
           </div>
 
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-center p-4 bg-zen-50 border border-zen-200 rounded-lg transition-all duration-200 hover:bg-zen-100">
             <div className="flex items-center justify-center mb-2">
-              <Calendar className="w-4 h-4 text-blue-600" />
+              <Calendar className="w-5 h-5 text-indigo-500" aria-hidden="true" />
             </div>
-            <div className="text-xs text-gray-900 font-medium">
+            <div className="text-sm text-accessible-text-primary font-bold mb-1" aria-label={`最後の実行日: ${lastActivityDate ? format(lastActivityDate, 'M月d日') : '未記録'}`}>
               {lastActivityDate 
                 ? format(lastActivityDate, 'M/d') 
                 : '未記録'
               }
             </div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-accessible-text-secondary font-medium">
               最後の実行
             </div>
           </div>
@@ -113,16 +113,16 @@ export function StreakDisplay({ userId }: StreakDisplayProps) {
 
         {/* ストリーク維持のヒント */}
         {streakStatus === 'active' && currentStreak >= 3 && (
-          <div className="bg-good-50 border border-good-200 rounded-lg p-3">
-            <p className="text-good-800 text-sm text-center">
+          <div className="bg-good-50 border border-good-300 rounded-lg p-4 shadow-zen">
+            <p className="text-good-700 text-sm text-center font-medium leading-relaxed">
               🎉 素晴らしい！この調子で続けていきましょう！
             </p>
           </div>
         )}
 
         {streakStatus === 'broken' && currentStreak > 0 && (
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-            <p className="text-orange-800 text-sm text-center">
+          <div className="bg-vermillion-50 border border-vermillion-300 rounded-lg p-4 shadow-zen">
+            <p className="text-vermillion-700 text-sm text-center font-medium leading-relaxed">
               💪 大丈夫！今日から新しいストリークを始めましょう！
             </p>
           </div>

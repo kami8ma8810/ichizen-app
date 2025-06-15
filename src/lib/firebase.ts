@@ -81,14 +81,20 @@ function initializeAuth(): Auth {
     }
   }
 
-  // 永続化設定
-  const persistenceType = authConfig.session.persistenceType === 'local' 
-    ? browserLocalPersistence 
-    : browserSessionPersistence;
+  // 永続化設定（ブラウザのみ）
+  if (typeof window !== 'undefined') {
+    const persistenceType = authConfig.session.persistenceType === 'local' 
+      ? browserLocalPersistence 
+      : browserSessionPersistence;
 
-  setPersistence(auth, persistenceType).catch((error: unknown) => {
-    console.error('❌ Firebase Auth 永続化設定に失敗:', error);
-  });
+    setPersistence(auth, persistenceType).then(() => {
+      if (isDevelopment) {
+        console.log('✅ Firebase Auth 永続化設定完了:', authConfig.session.persistenceType);
+      }
+    }).catch((error: unknown) => {
+      console.error('❌ Firebase Auth 永続化設定に失敗:', error);
+    });
+  }
 
   return auth;
 }
@@ -182,8 +188,4 @@ if (typeof window !== 'undefined') {
   } catch (error) {
     console.error('❌ Firebase 初期化エラー:', error);
   }
-}
-
-// 直接使用可能なauth・dbインスタンスをエクスポート
-export const auth = getFirebaseAuth();
-export const firestore = getFirestore(); 
+} 

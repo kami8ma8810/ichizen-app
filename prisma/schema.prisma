@@ -59,7 +59,8 @@ model GoodDeedTemplate {
 model Activity {
   id              String            @id @default(uuid())
   userId          String
-  templateId      String
+  templateId      String?
+  customTitle     String?           // 自由記入の善行タイトル
   date            DateTime          // 実行日（日付のみ）
   status          ActivityStatus    @default(COMPLETED)
   note            String?           // ユーザーのメモ
@@ -69,7 +70,7 @@ model Activity {
   
   // リレーション
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  template        GoodDeedTemplate  @relation(fields: [templateId], references: [id])
+  template        GoodDeedTemplate? @relation(fields: [templateId], references: [id])
   
   // 1日1善行制約
   @@unique([userId, date])

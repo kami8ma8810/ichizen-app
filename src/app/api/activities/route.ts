@@ -52,11 +52,11 @@ export async function POST(request: Request) {
   try {
     const data = await request.json()
     
-    const { userId, templateId, date, note, mood } = data
+    const { userId, templateId, date, note, mood, customTitle } = data
 
-    if (!userId || !templateId || !date) {
+    if (!userId || !date || (!templateId && !customTitle)) {
       return NextResponse.json(
-        { error: '必須項目が不足しています' },
+        { error: '必須項目が不足しています（ユーザーID、日付、テンプレートIDまたはカスタムタイトルが必要）' },
         { status: 400 }
       )
     }
@@ -81,20 +81,21 @@ export async function POST(request: Request) {
     const activity = await prisma.activity.create({
       data: {
         userId,
-        templateId,
+        templateId: templateId || null,
         date: new Date(date),
         note,
         mood: mood || 'GOOD',
-        status: 'COMPLETED'
+        status: 'COMPLETED',
+        customTitle: customTitle || null
       },
       include: {
-        template: {
+        template: templateId ? {
           select: {
             title: true,
             category: true,
             difficulty: true
           }
-        }
+        } : false
       }
     })
 
