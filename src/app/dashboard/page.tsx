@@ -10,6 +10,7 @@ import { GoodDeedCard } from '@/components/features/GoodDeedCard';
 import { ActivityForm } from '@/components/features/ActivityForm';
 import { StreakDisplay } from '@/components/features/StreakDisplay';
 import { Button } from '@/components/ui/Button';
+import { QRCodeDisplay } from '@/components/dev/QRCode';
 
 const DashboardPage: FC = () => {
   const router = useRouter();
@@ -126,7 +127,7 @@ const DashboardPage: FC = () => {
           )}
 
           {/* メインコンテンツ */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-8">
             {/* 善行カードまたはフォーム */}
             <div className="flex justify-center">
               {showForm && dailyTemplate ? (
@@ -163,6 +164,13 @@ const DashboardPage: FC = () => {
             <div className="flex justify-center">
               <div className="w-full max-w-md">
                 <StreakDisplay userId={user.uid} />
+              </div>
+            </div>
+
+            {/* 開発環境でのみQRコード表示 */}
+            <div className="flex justify-center xl:col-span-1 lg:col-span-2">
+              <div className="w-full max-w-md">
+                <QRCodeDisplay />
               </div>
             </div>
           </div>
