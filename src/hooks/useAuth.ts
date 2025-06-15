@@ -1,8 +1,8 @@
-import { useEffect, useCallback, useState, useMemo } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore, useIsAuthenticated, useAuthLoading, useAuthError } from '@/stores/authStore';
 import { authService } from '@/lib/auth';
-import { LoginFormData, RegisterFormData, AuthProvider } from '@/types/auth';
+import { LoginFormData, RegisterFormData } from '@/types/auth';
 import { authConfig } from '@/config/firebase';
 
 /**
@@ -45,7 +45,7 @@ export function useAuth() {
   useEffect(() => {
     if (!isClient) return;
     
-    const store = useAuthStore.getState();
+    useAuthStore.getState();
     if (useAuthStore.persist?.hasHydrated && !useAuthStore.persist.hasHydrated()) {
       useAuthStore.persist.rehydrate();
     }

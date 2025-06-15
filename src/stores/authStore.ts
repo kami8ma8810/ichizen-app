@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { User, AuthState, AuthResult, AuthError, AuthProvider } from '@/types/auth';
+import { User, AuthState, AuthResult } from '@/types/auth';
 import { useMemo } from 'react';
 
 interface AuthStore extends AuthState {
@@ -192,19 +192,6 @@ const selectUser = (state: AuthStore) => state.user;
 const selectIsAuthenticated = (state: AuthStore) => state.isAuthenticated;
 const selectIsLoading = (state: AuthStore) => state.isLoading;
 const selectError = (state: AuthStore) => state.error;
-
-// アクションセレクター（安定化）
-const selectActions = (state: AuthStore) => ({
-  setUser: state.setUser,
-  setLoading: state.setLoading,
-  setError: state.setError,
-  login: state.login,
-  logout: state.logout,
-  clearError: state.clearError,
-  updateUserSettings: state.updateUserSettings,
-  getAuthToken: state.getAuthToken,
-  refreshUser: state.refreshUser,
-});
 
 // セレクター（パフォーマンス最適化）
 export const useUser = () => useAuthStore(selectUser);

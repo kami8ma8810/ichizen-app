@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm db:push)",
+      "Bash(pnpm dev)",
+      "Bash(curl -X POST http://localhost:3000/api/seed)",
+      "Bash(pnpm build)",
+      "Bash(pnpm type-check)",
+      "Bash(git add .)"
+    ],
+    "deny": []
+  }
+}

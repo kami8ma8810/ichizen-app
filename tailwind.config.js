@@ -53,6 +53,7 @@ module.exports = {
         },
         // 一善アプリ専用カラー
         good: {
+          DEFAULT: '#22c55e',
           50: '#f0fdf4',
           100: '#dcfce7',
           500: '#22c55e',

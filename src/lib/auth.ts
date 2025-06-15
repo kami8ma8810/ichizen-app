@@ -16,7 +16,6 @@ import {
   User, 
   AuthResult, 
   AuthError, 
-  AuthProvider, 
   LoginFormData, 
   RegisterFormData,
   mapFirebaseUser 

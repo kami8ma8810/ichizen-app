@@ -13,7 +13,7 @@ const LoginPage: FC = () => {
   const [error, setError] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [rememberMe] = useState<boolean>(false);
 
   const handleEmailLogin = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();

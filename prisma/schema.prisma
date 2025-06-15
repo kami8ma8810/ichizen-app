@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // ユーザー情報
@@ -41,7 +41,7 @@ model GoodDeedTemplate {
   description String?    // 詳細説明
   category    Category   // カテゴリ
   difficulty  Difficulty @default(EASY) // 難易度
-  tags        String[]   // タグ（検索用）
+  tags        String?    // タグ（カンマ区切り）
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
