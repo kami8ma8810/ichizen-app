@@ -4,12 +4,24 @@ import { prisma } from '@/lib/prisma'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
+    const firebaseUid = searchParams.get('userId')
 
-    if (!userId) {
+    if (!firebaseUid) {
       return NextResponse.json(
         { error: 'ユーザーIDが必要です' },
         { status: 400 }
+      )
+    }
+
+    // Firebase UIDからデータベースUser IDを取得
+    const user = await prisma.user.findUnique({
+      where: { firebaseUid }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'ユーザーが見つかりません' },
+        { status: 404 }
       )
     }
 
@@ -19,7 +31,7 @@ export async function GET(request: NextRequest) {
     const todayActivity = await prisma.activity.findUnique({
       where: {
         userId_date: {
-          userId,
+          userId: user.id,
           date: today
         }
       },

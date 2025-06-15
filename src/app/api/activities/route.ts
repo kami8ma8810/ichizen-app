@@ -4,18 +4,30 @@ import { prisma } from '@/lib/prisma'
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
+    const firebaseUid = searchParams.get('userId')
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
 
-    if (!userId) {
+    if (!firebaseUid) {
       return NextResponse.json(
         { error: 'ユーザーIDが必要です' },
         { status: 400 }
       )
     }
 
-    const where: Record<string, unknown> = { userId }
+    // Firebase UIDからデータベースUser IDを取得
+    const user = await prisma.user.findUnique({
+      where: { firebaseUid }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'ユーザーが見つかりません' },
+        { status: 404 }
+      )
+    }
+
+    const where: Record<string, unknown> = { userId: user.id }
 
     if (startDate && endDate) {
       where['date'] = {
@@ -52,12 +64,24 @@ export async function POST(request: Request) {
   try {
     const data = await request.json()
     
-    const { userId, templateId, date, note, mood, customTitle } = data
+    const { userId: firebaseUid, templateId, date, note, mood, customTitle } = data
 
-    if (!userId || !date || (!templateId && !customTitle)) {
+    if (!firebaseUid || !date || (!templateId && !customTitle)) {
       return NextResponse.json(
         { error: '必須項目が不足しています（ユーザーID、日付、テンプレートIDまたはカスタムタイトルが必要）' },
         { status: 400 }
+      )
+    }
+
+    // Firebase UIDから数据库User IDを取得
+    const user = await prisma.user.findUnique({
+      where: { firebaseUid }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'ユーザーが見つかりません。再ログインしてください。' },
+        { status: 404 }
       )
     }
 
@@ -65,7 +89,7 @@ export async function POST(request: Request) {
     const existingActivity = await prisma.activity.findUnique({
       where: {
         userId_date: {
-          userId,
+          userId: user.id,
           date: new Date(date)
         }
       }
@@ -80,7 +104,7 @@ export async function POST(request: Request) {
 
     const activity = await prisma.activity.create({
       data: {
-        userId,
+        userId: user.id, // データベースのUser IDを使用
         templateId: templateId || null,
         date: new Date(date),
         note,

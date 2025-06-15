@@ -143,21 +143,8 @@ export async function GET() {
         </div>
         
         <script>
-            // 5秒ごとに自動更新（IPアドレス変更検知）
-            setInterval(() => {
-                fetch('/api/dev/qr')
-                    .then(response => {
-                        if (response.ok) {
-                            const currentUrl = new URL(window.location);
-                            if (response.url !== currentUrl.href) {
-                                window.location.reload();
-                            }
-                        }
-                    })
-                    .catch(() => {
-                        // ネットワークエラーは無視
-                    });
-            }, 5000);
+            // 自動更新は無効化（手動更新ボタンのみ）
+            console.log('QRコードページが読み込まれました');
         </script>
     </body>
     </html>
