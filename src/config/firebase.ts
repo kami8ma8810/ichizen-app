@@ -53,6 +53,7 @@ export const authConfig = {
     'auth/network-request-failed': 'ネットワークエラーが発生しました',
     'auth/popup-closed-by-user': 'ログインがキャンセルされました',
     'auth/cancelled-popup-request': 'ログインがキャンセルされました',
+    'auth/admin-restricted-operation': 'Firebase Consoleで匿名認証を有効化してください。Authentication > Sign-in method > Anonymous を有効にしてください。',
   },
 } as const;
 
