@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,14 @@ import type { LoginFormData } from '@/types/auth';
 
 const LoginPage: FC = () => {
   const router = useRouter();
+  
+  // 本番環境では認証ページをブロック
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      router.push('/');
+    }
+  }, [router]);
+  
   const { loginWithEmail, loginWithGoogle, isLoading } = useAuth();
   const [error, setError] = useState<string>('');
   const [email, setEmail] = useState<string>('');

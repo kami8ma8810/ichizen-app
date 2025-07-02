@@ -21,13 +21,16 @@ const DashboardPage: FC = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
   // showFormステートは不要になったので削除
   
-  const { dailyTemplate, todayActivity, isLoading: goodDeedsLoading, error, recordActivity } = useGoodDeeds(user?.uid || null);
+  const { dailyTemplate, recommendations, todayActivity, isLoading: goodDeedsLoading, error, recordActivity } = useGoodDeeds(user?.uid || null);
 
   // 認証チェック
   useEffect(() => {
+    console.log('📊 ダッシュボード認証チェック:', { isLoading, isAuthenticated, user: user?.uid });
+    
     if (!isLoading) {
       if (!isAuthenticated) {
-        router.push('/auth/login');
+        console.log('❌ 未認証のためホームページにリダイレクト');
+        router.push('/');
       } else {
         setIsPageLoading(false);
       }
@@ -86,19 +89,24 @@ const DashboardPage: FC = () => {
                     alt={user.name || 'ユーザー'}
                   />
                 )}
-                <span className="text-sm font-medium text-accessible-text-secondary">
-                  {user.name || user.email}
-                </span>
+                {(user.name || user.email) && (
+                  <span className="text-sm font-medium text-accessible-text-secondary">
+                    {user.name || user.email}
+                  </span>
+                )}
               </div>
-              <Button
-                onClick={handleLogout}
-                variant="indigo"
-                size="sm"
-                className="motion-safe-zen focus-visible-zen"
-                aria-label="アカウントからログアウトする"
-              >
-                ログアウト
-              </Button>
+              {/* 匿名ユーザー以外にログアウトボタンを表示 */}
+              {(user.name || user.email) && (
+                <Button
+                  onClick={handleLogout}
+                  variant="indigo"
+                  size="sm"
+                  className="motion-safe-zen focus-visible-zen"
+                  aria-label="アカウントからログアウトする"
+                >
+                  ログアウト
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -110,10 +118,10 @@ const DashboardPage: FC = () => {
           {/* ウェルカムメッセージ */}
           <div className="text-center">
             <h2 className="subtitle-zen text-2xl mb-3">
-              おかえりなさい、{user.name || 'さん'}！
+              {user.name || user.email ? `おかえりなさい、${user.name || user.email}！` : '今日も善行を始めましょう'}
             </h2>
             <p className="text-accessible-text-secondary leading-relaxed">
-              今日も小さな善行から始めましょう
+              {user.name || user.email ? '今日も小さな善行から始めましょう' : '小さな一歩が、大きな変化を生み出します'}
             </p>
           </div>
 
@@ -131,6 +139,7 @@ const DashboardPage: FC = () => {
               <QuickGoodDeedForm
                 todayActivity={todayActivity}
                 template={dailyTemplate || undefined}
+                recommendations={recommendations}
                 onSubmit={handleFormSubmit}
                 isLoading={goodDeedsLoading}
               />

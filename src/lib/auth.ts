@@ -142,15 +142,25 @@ export class AuthService {
    */
   async loginAnonymously(): Promise<AuthResult> {
     try {
-      const userCredential = await signInAnonymously(this.auth);
-      const user = mapFirebaseUser(userCredential.user);
+      console.log('🔄 Firebase匿名ログインを実行中...');
+      console.log('📊 Firebase Auth インスタンス:', this.auth);
       
-      return {
+      const userCredential = await signInAnonymously(this.auth);
+      console.log('✅ Firebase匿名ログイン成功:', userCredential.user.uid);
+      
+      const user = mapFirebaseUser(userCredential.user);
+      console.log('✅ ユーザーマッピング完了:', user);
+      
+      const result = {
         user,
         isNewUser: true,
-        provider: 'anonymous',
+        provider: 'anonymous' as const,
       };
+      
+      console.log('✅ AuthResult作成完了:', result);
+      return result;
     } catch (error) {
+      console.error('❌ Firebase匿名ログインエラー:', error);
       throw this.translateAuthError(error);
     }
   }
@@ -204,12 +214,32 @@ export class AuthService {
    * @param callback 認証状態変更時のコールバック
    */
   onAuthStateChange(callback: (user: User | null) => void): () => void {
+    console.log('🔄 Firebase認証状態監視を開始...');
+    
+    let hasInitialStateSet = false;
+    
+    // 初期認証状態のタイムアウト処理（5秒）
+    const initialTimeout = setTimeout(() => {
+      if (!hasInitialStateSet) {
+        console.warn('⚠️ Firebase認証初期化タイムアウト - 未認証として処理');
+        hasInitialStateSet = true;
+        callback(null);
+      }
+    }, 5000);
+    
     this.unsubscribe = onAuthStateChanged(this.auth, (firebaseUser: FirebaseUser | null) => {
+      if (!hasInitialStateSet) {
+        clearTimeout(initialTimeout);
+        hasInitialStateSet = true;
+      }
+      
       const user = firebaseUser ? mapFirebaseUser(firebaseUser) : null;
+      console.log('📡 Firebase認証状態変更検知:', user ? `UID: ${user.uid}` : 'ログアウト');
       callback(user);
     });
 
     return () => {
+      clearTimeout(initialTimeout);
       this.unsubscribe?.();
       this.unsubscribe = null;
     };

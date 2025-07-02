@@ -24,6 +24,7 @@ export function useAuth() {
   // クライアントサイドでのみ実行
   useEffect(() => {
     setIsClient(true);
+    console.log('🔄 useAuth初期化完了');
   }, []);
 
   // 注意: Firebase認証状態の監視は AuthProvider で行われています
@@ -90,21 +91,30 @@ export function useAuth() {
 
   // 匿名ログイン
   const loginAnonymously = useCallback(async (): Promise<boolean> => {
-    if (!isClient) return false;
+    if (!isClient) {
+      console.warn('⚠️ クライアントサイドが未初期化のため匿名ログインをスキップ');
+      return false;
+    }
     
     try {
+      console.log('🔄 匿名ログイン開始...');
       setLoading(true);
       clearError();
       
       const result = await authService.loginAnonymously();
+      console.log('✅ authService.loginAnonymously成功:', result);
+      
       login(result);
+      console.log('✅ Zustand login関数実行完了');
       
       return true;
     } catch (error: any) {
+      console.error('❌ 匿名ログインエラー:', error);
       setError(error.message);
       return false;
     } finally {
       setLoading(false);
+      console.log('🔄 匿名ログイン処理完了');
     }
   }, [isClient, setLoading, clearError, login, setError]);
 

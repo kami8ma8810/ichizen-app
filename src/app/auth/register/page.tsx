@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth, useRedirectIfAuthenticated } from '@/hooks/useAuth';
@@ -12,6 +12,14 @@ import { authConfig } from '@/config/firebase';
  */
 export default function RegisterPage(): React.JSX.Element {
   const router = useRouter();
+  
+  // 本番環境では認証ページをブロック
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      router.push('/');
+    }
+  }, [router]);
+  
   const { registerWithEmail, loginWithGoogle, isLoading, error, clearError } = useAuth();
   const { shouldShowContent } = useRedirectIfAuthenticated();
 

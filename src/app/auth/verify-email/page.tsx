@@ -11,6 +11,14 @@ import { authConfig } from '@/config/firebase';
  */
 export default function VerifyEmailPage(): React.JSX.Element {
   const router = useRouter();
+  
+  // 本番環境では認証ページをブロック
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      router.push('/');
+    }
+  }, [router]);
+  
   const { isLoading, error, clearError } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [isResending, setIsResending] = useState<boolean>(false);
