@@ -29,6 +29,7 @@ interface Activity {
 
 export function useGoodDeeds(userId: string | null) {
   const [dailyTemplate, setDailyTemplate] = useState<GoodDeedTemplate | null>(null)
+  const [recommendations, setRecommendations] = useState<GoodDeedTemplate[]>([])
   const [todayActivity, setTodayActivity] = useState<Activity | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +46,18 @@ export function useGoodDeeds(userId: string | null) {
       setError(err instanceof Error ? err.message : 'エラーが発生しました')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  // おすすめテンプレートを取得（5つ）
+  const fetchRecommendations = async () => {
+    try {
+      const response = await fetch('/api/templates/recommendations')
+      if (!response.ok) throw new Error('おすすめの取得に失敗しました')
+      const templates = await response.json()
+      setRecommendations(templates)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'エラーが発生しました')
     }
   }
 
@@ -105,6 +118,7 @@ export function useGoodDeeds(userId: string | null) {
   // 初期化
   useEffect(() => {
     fetchDailyTemplate()
+    fetchRecommendations()
   }, [])
 
   useEffect(() => {
@@ -115,12 +129,14 @@ export function useGoodDeeds(userId: string | null) {
 
   return {
     dailyTemplate,
+    recommendations,
     todayActivity,
     isLoading,
     error,
     recordActivity,
     refetch: () => {
       fetchDailyTemplate()
+      fetchRecommendations()
       if (userId) fetchTodayActivity()
     }
   }

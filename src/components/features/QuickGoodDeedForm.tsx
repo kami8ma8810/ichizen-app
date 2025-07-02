@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button-zen'
-import { Lightbulb, Plus, Sparkles } from 'lucide-react'
+import { Lightbulb, Plus, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface QuickGoodDeedFormProps {
   todayActivity?: {
@@ -17,22 +17,30 @@ interface QuickGoodDeedFormProps {
     title: string
     description: string | null
   }
+  recommendations?: {
+    id: string
+    title: string
+    description: string | null
+    category: string
+    difficulty: 'EASY' | 'MEDIUM' | 'HARD'
+  }[]
   onSubmit: (data: { title: string; note: string; mood: string }) => void
   isLoading?: boolean
 }
 
 const moods = [
-  { value: 'EXCELLENT', label: '最高！', emoji: '😊', color: 'bg-green-100 text-green-700 border-green-300' },
-  { value: 'GOOD', label: '良い', emoji: '😌', color: 'bg-blue-100 text-blue-700 border-blue-300' },
-  { value: 'NEUTRAL', label: '普通', emoji: '😐', color: 'bg-gray-100 text-gray-700 border-gray-300' },
-  { value: 'BAD', label: '微妙', emoji: '😞', color: 'bg-yellow-100 text-yellow-700 border-yellow-300' }
+  { value: 'EXCELLENT', label: '最高！', emoji: '😊', color: 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:border-green-300' },
+  { value: 'GOOD', label: '良い', emoji: '😌', color: 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 hover:border-blue-300' },
+  { value: 'NEUTRAL', label: '普通', emoji: '😐', color: 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:border-gray-300' },
+  { value: 'BAD', label: '微妙', emoji: '😞', color: 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100 hover:border-orange-300' }
 ]
 
-export function QuickGoodDeedForm({ todayActivity, template, onSubmit, isLoading = false }: QuickGoodDeedFormProps) {
+export function QuickGoodDeedForm({ todayActivity, template, recommendations = [], onSubmit, isLoading = false }: QuickGoodDeedFormProps) {
   const [title, setTitle] = useState('')
   const [note, setNote] = useState('')
   const [mood, setMood] = useState('GOOD')
   const [showSuggestion, setShowSuggestion] = useState(false)
+  const [currentRecommendationIndex, setCurrentRecommendationIndex] = useState(0)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,10 +52,30 @@ export function QuickGoodDeedForm({ todayActivity, template, onSubmit, isLoading
     setMood('GOOD')
   }
 
-  const handleSuggestionClick = () => {
-    if (template) {
-      setTitle(template.title)
+  const handleSuggestionClick = (selectedTemplate?: typeof template) => {
+    const targetTemplate = selectedTemplate || getCurrentRecommendation()
+    if (targetTemplate) {
+      setTitle(targetTemplate.title)
       setShowSuggestion(false)
+    }
+  }
+
+  const getCurrentRecommendation = () => {
+    if (recommendations.length > 0) {
+      return recommendations[currentRecommendationIndex]
+    }
+    return template
+  }
+
+  const goToNextRecommendation = () => {
+    if (recommendations.length > 0) {
+      setCurrentRecommendationIndex((prev) => (prev + 1) % recommendations.length)
+    }
+  }
+
+  const goToPrevRecommendation = () => {
+    if (recommendations.length > 0) {
+      setCurrentRecommendationIndex((prev) => (prev - 1 + recommendations.length) % recommendations.length)
     }
   }
 
@@ -118,29 +146,70 @@ export function QuickGoodDeedForm({ todayActivity, template, onSubmit, isLoading
             </div>
             
             {/* 提案ボタン */}
-            {template && !showSuggestion && title.length === 0 && (
+            {(template || recommendations.length > 0) && !showSuggestion && title.length === 0 && (
               <button
                 type="button"
                 onClick={() => setShowSuggestion(!showSuggestion)}
                 className="mt-3 inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 focus-visible-zen"
               >
                 <Lightbulb className="w-4 h-4" />
-                今日のおすすめを見る
+                今日のおすすめを見る ({recommendations.length > 0 ? recommendations.length : 1}個)
               </button>
             )}
             
             {/* 提案表示 */}
-            {showSuggestion && template && (
+            {showSuggestion && (
               <div className="mt-3 bg-gradient-good rounded-lg p-4 border border-good-200">
-                <p className="text-sm text-good-700 mb-2 font-medium">💡 今日のおすすめ</p>
-                <p className="text-good-800 font-medium mb-2">{template.title}</p>
-                {template.description && (
-                  <p className="text-sm text-good-700 mb-3">{template.description}</p>
-                )}
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm text-good-700 font-medium">💡 今日のおすすめ</p>
+                  {recommendations.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={goToPrevRecommendation}
+                        className="p-1 text-good-600 hover:text-good-700 hover:bg-good-100 rounded-full transition-colors"
+                        aria-label="前のおすすめ"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <span className="text-xs text-good-600 font-medium">
+                        {currentRecommendationIndex + 1} / {recommendations.length}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={goToNextRecommendation}
+                        className="p-1 text-good-600 hover:text-good-700 hover:bg-good-100 rounded-full transition-colors"
+                        aria-label="次のおすすめ"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                {(() => {
+                  const currentTemplate = getCurrentRecommendation()
+                  if (!currentTemplate) return null
+                  
+                  return (
+                    <div>
+                      <p className="text-good-800 font-medium mb-2">{currentTemplate.title}</p>
+                      {currentTemplate.description && (
+                        <p className="text-sm text-good-700 mb-3">{currentTemplate.description}</p>
+                      )}
+                      {'category' in currentTemplate && currentTemplate.category && (
+                        <p className="text-xs text-good-600 mb-3">
+                          カテゴリ: {currentTemplate.category}
+                        </p>
+                      )}
+                    </div>
+                  )
+                })()}
+                
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={handleSuggestionClick}
+                    onClick={() => handleSuggestionClick()}
                     className="btn-zen-secondary text-xs px-3 py-1"
                   >
                     これにする
@@ -168,8 +237,8 @@ export function QuickGoodDeedForm({ todayActivity, template, onSubmit, isLoading
                   onClick={() => setMood(moodOption.value)}
                   className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-200 focus-visible-zen motion-safe-zen min-h-[48px] ${
                     mood === moodOption.value
-                      ? 'border-good-500 bg-good-50 text-good-700 shadow-zen'
-                      : `${moodOption.color} hover:shadow-zen`
+                      ? 'border-good-500 bg-good-100 text-good-700 shadow-lg ring-2 ring-good-200'
+                      : `${moodOption.color} hover:shadow-md hover:scale-105`
                   }`}
                   aria-pressed={mood === moodOption.value}
                   aria-label={`気分: ${moodOption.label}`}
