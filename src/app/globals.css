@@ -13,27 +13,27 @@
   --zen-500: 193 154 107;  /* 利休茶 */
   --zen-900: 88 55 41;     /* 焦茶色 */
   
-  /* 善行カラー */
-  --good-50: 246 248 240;   /* 若緑 */
-  --good-500: 122 155 58;   /* 緑茶色 */
-  --good-600: 74 93 35;     /* 抹茶色 */
-  --good-900: 35 45 17;     /* 深緑茶 */
+  /* 善行カラー（より鮮やか） */
+  --good-50: 240 253 244;   /* 極薄緑 */
+  --good-500: 34 197 94;    /* 鮮やかな緑 */
+  --good-600: 22 163 74;    /* 深緑 */
+  --good-900: 20 83 45;     /* 最も濃い緑 */
   
-  /* 朱色 */
-  --vermillion-500: 232 101 58;  /* 朱色 */
-  --vermillion-600: 209 77 38;   /* 紅色 */
+  /* オレンジ色（より鮮やか） */
+  --vermillion-500: 249 115 22;  /* 鮮やかなオレンジ */
+  --vermillion-600: 234 88 12;   /* 深オレンジ */
   
-  /* 藍色 */
-  --indigo-500: 70 130 180;  /* 藍色 */
-  --indigo-600: 45 90 160;   /* 紺藍 */
+  /* ブルー色（より鮮やか） */
+  --indigo-500: 59 130 246;  /* 鮮やかな青 */
+  --indigo-600: 37 99 235;   /* 深青 */
   
-  /* アクセシビリティ対応（WCAG2.2-A） */
-  --text-primary: 26 29 26;      /* コントラスト比 15.3:1 */
-  --text-secondary: 74 93 35;    /* コントラスト比 4.7:1 */
-  --text-muted: 107 114 128;     /* コントラスト比 4.5:1 */
+  /* アクセシビリティ対応（WCAG2.2-A・より鮮やか） */
+  --text-primary: 17 24 39;      /* より濃いグレー（コントラスト比 15.3:1） */
+  --text-secondary: 21 128 61;   /* 鮮やかな緑（コントラスト比 4.8:1） */
+  --text-muted: 107 114 128;     /* グレー（コントラスト比 4.5:1） */
   
-  /* フォーカス表示 */
-  --focus-ring: 70 130 180;      /* 藍色 */
+  /* フォーカス表示（より鮮やか） */
+  --focus-ring: 59 130 246;      /* 鮮やかな青 */
   --focus-offset: 255 255 255;   /* 白 */
   
   /* ボーダー半径（和風に調整） */
@@ -112,14 +112,19 @@
 
 /* コンポーネントスタイル */
 @layer components {
-  /* 和風ボタン */
+  /* 和風ボタン（より鮮やか） */
   .btn-zen {
     @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
-    @apply bg-good-600 text-white hover:bg-good-700 focus:bg-good-700;
-    @apply shadow-zen hover:shadow-zen-lg;
+    @apply bg-good-500 text-white hover:bg-good-600 focus:bg-good-600;
+    @apply shadow-lg hover:shadow-xl;
     @apply focus:ring-2 focus:ring-accessible-focus-ring focus:ring-offset-2;
     min-height: 44px; /* WCAG2.2: タッチターゲットサイズ */
     min-width: 44px;
+    transform: translateY(0);
+  }
+  
+  .btn-zen:hover {
+    transform: translateY(-2px);
   }
   
   .btn-zen-outline {
