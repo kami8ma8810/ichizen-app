@@ -36,7 +36,8 @@
       "Bash(sqlite3:*)",
       "Bash(curl:*)",
       "Bash(cp:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }
