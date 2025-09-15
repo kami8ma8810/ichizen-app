@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { Calendar } from '@/components/ui/Calendar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useActivities } from '@/hooks/useActivities'
 import { addMonths, subMonths, format } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 interface ActivityCalendarProps {
   userId: string

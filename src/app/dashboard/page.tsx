@@ -8,7 +8,7 @@ import { useGoodDeeds } from '@/hooks/useGoodDeeds'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
-import { Calendar, Trophy, TrendingUp, LogOut, Plus, Check } from 'lucide-react'
+import { Calendar, Trophy, LogOut, Plus, Check } from 'lucide-react'
 import { StreakDisplay } from '@/components/features/StreakDisplay'
 
 const DashboardPage = () => {
@@ -230,12 +230,12 @@ const DashboardPage = () => {
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
+            {/* 善行カレンダー */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-purple-500" />
-                  クイックアクション
+                  <Calendar className="h-5 w-5 text-purple-500" />
+                  善行カレンダー
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -246,7 +246,7 @@ const DashboardPage = () => {
                   onClick={() => router.push('/calendar')}
                 >
                   <Calendar className="mr-2 h-4 w-4" />
-                  カレンダーを見る
+                  記録を確認する
                 </Button>
               </CardContent>
             </Card>

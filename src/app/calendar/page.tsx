@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { ActivityCalendar } from '@/components/features/ActivityCalendar'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
 export default function CalendarPage() {
