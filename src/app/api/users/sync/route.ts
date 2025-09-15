@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/db-adapter'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,13 +13,13 @@ export async function POST(request: NextRequest) {
     }
 
     // 既存のユーザーを確認
-    let user = await prisma.user.findUnique({
+    let user = await db.user.findUnique({
       where: { firebaseUid }
     })
 
     if (!user) {
       // ユーザーが存在しない場合は新規作成
-      user = await prisma.user.create({
+      user = await db.user.create({
         data: {
           firebaseUid,
           email: email || null,
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       console.log(`✅ 新しいユーザーを作成しました: ${user.id} (Firebase UID: ${firebaseUid})`)
     } else {
       // 既存ユーザーの情報を更新
-      user = await prisma.user.update({
+      user = await db.user.update({
         where: { firebaseUid },
         data: {
           email: email || user.email,
@@ -39,7 +39,14 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date()
         }
       })
-      console.log(`🔄 ユーザー情報を更新しました: ${user.id}`)
+      console.log(`🔄 ユーザー情報を更新しました: ${user?.id}`)
+    }
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'ユーザー情報の取得に失敗しました' },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json({ 

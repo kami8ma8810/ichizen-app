@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザー情報
+model User {
+  id                String    @id @default(uuid())
+  email             String?   @unique
+  name              String?
+  image             String?
+  firebaseUid       String?   @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  isActive          Boolean   @default(true)
+  
+  // 設定
+  notificationTime  String?   // 通知時間 (HH:mm形式)
+  timezone          String    @default("Asia/Tokyo")
+  language          String    @default("ja")
+  
+  // リレーション
+  activities        Activity[]
+  userBadges        UserBadge[]
+  streaks           Streak[]
+  
+  @@map("users")
+}
+
+// 善行テンプレート
+model GoodDeedTemplate {
+  id          String     @id @default(uuid())
+  title       String     // 善行のタイトル
+  description String?    // 詳細説明
+  category    Category   // カテゴリ
+  difficulty  Difficulty @default(EASY) // 難易度
+  tags        String?    // タグ（カンマ区切り）
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  // 利用統計
+  usageCount  Int        @default(0)
+  
+  // リレーション
+  activities  Activity[]
+  
+  @@map("good_deed_templates")
+}
+
+// 善行実行記録
+model Activity {
+  id              String            @id @default(uuid())
+  userId          String
+  templateId      String?
+  customTitle     String?           // 自由記入の善行タイトル
+  date            DateTime          // 実行日（日付のみ）
+  status          ActivityStatus    @default(COMPLETED)
+  note            String?           // ユーザーのメモ
+  mood            Mood?             // 実行後の気分
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  // リレーション
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template        GoodDeedTemplate? @relation(fields: [templateId], references: [id])
+  
+  // 1日1善行制約
+  @@unique([userId, date])
+  @@map("activities")
+}
+
+// バッジ定義
+model Badge {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String
+  icon        String      // アイコンのURL or コード
+  category    BadgeCategory
+  condition   Json        // 取得条件（JSON形式）
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  
+  // リレーション
+  userBadges  UserBadge[]
+  
+  @@map("badges")
+}
+
+// ユーザーバッジ（取得済みバッジ）
+model UserBadge {
+  id          String   @id @default(uuid())
+  userId      String
+  badgeId     String
+  obtainedAt  DateTime @default(now())
+  
+  // リレーション
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge       Badge    @relation(fields: [badgeId], references: [id])
+  
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+// 連続記録
+model Streak {
+  id          String   @id @default(uuid())
+  userId      String
+  startDate   DateTime
+  endDate     DateTime?
+  count       Int      @default(1)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // リレーション
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("streaks")
+}
+
+// 善行カテゴリ
+enum Category {
+  KINDNESS      // 親切
+  ENVIRONMENT   // 環境
+  COMMUNITY     // コミュニティ
+  FAMILY        // 家族
+  HEALTH        // 健康
+  WORK          // 仕事
+  PERSONAL      // 個人的成長
+  CHARITY       // チャリティ
+  EDUCATION     // 教育
+  OTHER         // その他
+}
+
+// 難易度
+enum Difficulty {
+  EASY          // 簡単（5分以内）
+  MEDIUM        // 普通（15分以内）
+  HARD          // 難しい（30分以上）
+}
+
+// 活動ステータス
+enum ActivityStatus {
+  COMPLETED     // 完了
+  SKIPPED       // スキップ
+  PLANNED       // 予定
+}
+
+// 気分
+enum Mood {
+  EXCELLENT     // 最高
+  GOOD          // 良い
+  NEUTRAL       // 普通
+  BAD           // 悪い
+}
+
+// バッジカテゴリ
+enum BadgeCategory {
+  STREAK        // 連続記録
+  TOTAL         // 累計
+  CATEGORY      // カテゴリ別
+  SPECIAL       // 特別
+  SEASONAL      // 季節
+}

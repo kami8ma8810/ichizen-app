@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/db-adapter'
 
 export async function GET() {
   try {
-    const templates = await prisma.goodDeedTemplate.findMany({
+    const templates = await db.goodDeedTemplate.findMany({
       where: { isActive: true },
       orderBy: { usageCount: 'asc' }
     })
@@ -18,11 +18,14 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
-    const data = await request.json()
-    
-    const template = await prisma.goodDeedTemplate.create({
+    // POST is not supported in memory DB
+    return NextResponse.json(
+      { error: 'テンプレートの作成は現在サポートされていません' },
+      { status: 501 }
+    )
+    /* const template = await db.goodDeedTemplate.create({
       data: {
         title: data.title,
         description: data.description,
@@ -32,7 +35,7 @@ export async function POST(request: Request) {
       }
     })
 
-    return NextResponse.json(template, { status: 201 })
+    return NextResponse.json(template, { status: 201 }) */
   } catch (error) {
     console.error('Template creation error:', error)
     return NextResponse.json(

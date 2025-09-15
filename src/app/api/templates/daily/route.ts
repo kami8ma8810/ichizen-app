@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/db-adapter'
 
 export async function GET() {
   try {
@@ -9,7 +9,7 @@ export async function GET() {
     // 今日の日付をベースにシードを作成（一貫した結果を得るため）
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000)
     
-    const templates = await prisma.goodDeedTemplate.findMany({
+    const templates = await db.goodDeedTemplate.findMany({
       where: { isActive: true },
       orderBy: { usageCount: 'asc' }
     })
@@ -24,11 +24,11 @@ export async function GET() {
     // 今日の日付ベースで決定論的にテンプレートを選択
     const selectedTemplate = templates[dayOfYear % templates.length]
 
-    // 使用回数を増加
-    await prisma.goodDeedTemplate.update({
-      where: { id: selectedTemplate!.id },
-      data: { usageCount: { increment: 1 } }
-    })
+    // 使用回数を増加（メモリDBではスキップ）
+    // await db.goodDeedTemplate.update({
+    //   where: { id: selectedTemplate!.id },
+    //   data: { usageCount: { increment: 1 } }
+    // })
 
     return NextResponse.json(selectedTemplate)
   } catch (error) {

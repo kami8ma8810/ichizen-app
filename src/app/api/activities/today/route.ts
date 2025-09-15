@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/db-adapter'
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Firebase UIDからデータベースUser IDを取得
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { firebaseUid }
     })
 
@@ -28,12 +28,10 @@ export async function GET(request: NextRequest) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    const todayActivity = await prisma.activity.findUnique({
+    const todayActivity = await db.activity.findFirst({
       where: {
-        userId_date: {
-          userId: user.id,
-          date: today
-        }
+        userId: user.id,
+        date: today
       },
       include: {
         template: {

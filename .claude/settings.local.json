@@ -40,7 +40,8 @@
       "Bash(cat:*)",
       "Bash(grep:*)",
       "WebSearch",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

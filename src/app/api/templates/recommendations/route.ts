@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/db-adapter'
 
 export async function GET() {
   try {
     // 全てのアクティブなテンプレートを取得
-    const allTemplates = await prisma.goodDeedTemplate.findMany({
+    const allTemplates = await db.goodDeedTemplate.findMany({
       where: { isActive: true },
       orderBy: { usageCount: 'asc' }
     })

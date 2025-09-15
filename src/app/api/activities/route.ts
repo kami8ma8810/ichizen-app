@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/db-adapter'
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Firebase UIDからデータベースUser IDを取得
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { firebaseUid }
     })
 
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const activities = await prisma.activity.findMany({
+    const activities = await db.activity.findMany({
       where,
       include: {
         template: {
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     }
 
     // Firebase UIDから数据库User IDを取得
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { firebaseUid }
     })
 
@@ -86,12 +86,10 @@ export async function POST(request: Request) {
     }
 
     // 同じ日の活動が既に存在するかチェック
-    const existingActivity = await prisma.activity.findUnique({
+    const existingActivity = await db.activity.findFirst({
       where: {
-        userId_date: {
-          userId: user.id,
-          date: new Date(date)
-        }
+        userId: user.id,
+        date: new Date(date)
       }
     })
 
@@ -102,7 +100,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const activity = await prisma.activity.create({
+    const activity = await db.activity.create({
       data: {
         userId: user.id, // データベースのUser IDを使用
         templateId: templateId || null,
