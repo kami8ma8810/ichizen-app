@@ -1,89 +1,64 @@
-'use client';
+'use client'
 
-import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/stores/authStore'
+import { Button } from '@/components/ui/button'
+import { ChevronRight } from 'lucide-react'
 
 export default function HomePage() {
-  const router = useRouter();
-  const { loginAnonymously, isLoading, isAuthenticated, error } = useAuth();
+  const router = useRouter()
+  const { isAuthenticated, isLoading } = useAuthStore()
+  const [mounted, setMounted] = useState(false)
 
-  const handleQuickStart = async () => {
-    try {
-      console.log('🚀 「今すぐ始める」ボタンがクリックされました');
-      console.log('📊 現在の認証状態:', { isLoading, isAuthenticated: false });
-      
-      const success = await loginAnonymously();
-      console.log('🔐 匿名ログイン結果:', success);
-      
-      if (success) {
-        console.log('✅ ダッシュボードにリダイレクト開始');
-        router.push('/dashboard');
-      } else {
-        console.error('❌ 匿名ログインに失敗しました');
-      }
-    } catch (error) {
-      console.error('💥 ハンドル処理でエラー:', error);
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push('/dashboard')
     }
-  };
-  return (
-    <div className="min-h-screen bg-gradient-zen">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center">
-          <h1 className="title-zen text-5xl sm:text-7xl text-shadow-zen mb-2">
-            <span className="text-good-600">一日一善</span>
-          </h1>
-          <div className="mt-12 flex items-center justify-center gap-x-6 flex-wrap">
-            <button
-              onClick={handleQuickStart}
-              disabled={isLoading}
-              className="btn-zen text-lg px-8 py-4 motion-safe-zen focus-visible-zen disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="今すぐ善行を始める"
-            >
-              {isLoading ? '準備中...' : '今すぐ始める'}
-            </button>
-          </div>
+  }, [isAuthenticated, isLoading, router])
 
-          {/* 開発環境でのみ開発者向けリンクを表示 */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-8 space-y-4">
-              <div className="bg-gray-100 p-4 rounded text-sm">
-                <h3 className="font-semibold mb-2">🔍 デバッグ情報</h3>
-                <p>Loading: {isLoading ? 'true' : 'false'}</p>
-                <p>Authenticated: {isAuthenticated ? 'true' : 'false'}</p>
-                {error && <p className="text-red-600">Error: {error}</p>}
-              </div>
-              <div>
-                <Link
-                  href="/dev/qr"
-                  className="btn-zen-secondary text-sm motion-safe-zen focus-visible-zen"
-                  aria-label="スマートフォンでのテスト用QRコードページへ移動"
-                >
-                  📱 スマホテスト（QRコード）
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/test-firebase"
-                  className="text-xs text-indigo-600 hover:text-indigo-700 focus-visible-zen motion-safe-zen"
-                  aria-label="Firebase接続テストページへ移動"
-                >
-                  🔧 Firebase接続テスト
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/auth/login"
-                  className="text-xs text-gray-500 hover:text-gray-700 focus-visible-zen motion-safe-zen"
-                  aria-label="開発者向けログインページ"
-                >
-                  🔐 開発者ログイン
-                </Link>
-              </div>
-            </div>
-          )}
+  if (!mounted || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center space-y-8 p-8">
+        <div className="space-y-4">
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
+            一日一善
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            小さな善行が、大きな変化を生む
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button
+            size="lg"
+            onClick={() => router.push('/auth/login')}
+            className="group"
+          >
+            始める
+            <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => router.push('/auth/login')}
+          >
+            ログイン
+          </Button>
         </div>
       </div>
     </div>
-  );
-} 
+  )
+}

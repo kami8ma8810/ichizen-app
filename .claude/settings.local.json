@@ -41,7 +41,14 @@
       "Bash(grep:*)",
       "WebSearch",
       "Bash(git commit:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git push:*)",
+      "Bash(mv:*)",
+      "Bash(npx:*)",
+      "Bash(pnpm add:*)",
+      "Bash(PORT=3002 pnpm dev)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)"
     ],
     "deny": []
   }

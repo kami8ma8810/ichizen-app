@@ -1,271 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 和風デザインのCSS変数 */
-:root {
-  /* 和風カラーパレット */
-  --zen-50: 253 252 250;   /* 和紙色 */
-  --zen-100: 250 247 242;  /* 白練色 */
-  --zen-200: 240 230 214;  /* 生成り色 */
-  --zen-500: 193 154 107;  /* 利休茶 */
-  --zen-900: 88 55 41;     /* 焦茶色 */
-  
-  /* 善行カラー（より鮮やか） */
-  --good-50: 240 253 244;   /* 極薄緑 */
-  --good-500: 34 197 94;    /* 鮮やかな緑 */
-  --good-600: 22 163 74;    /* 深緑 */
-  --good-900: 20 83 45;     /* 最も濃い緑 */
-  
-  /* オレンジ色（より鮮やか） */
-  --vermillion-500: 249 115 22;  /* 鮮やかなオレンジ */
-  --vermillion-600: 234 88 12;   /* 深オレンジ */
-  
-  /* ブルー色（より鮮やか） */
-  --indigo-500: 59 130 246;  /* 鮮やかな青 */
-  --indigo-600: 37 99 235;   /* 深青 */
-  
-  /* アクセシビリティ対応（WCAG2.2-A・より鮮やか） */
-  --text-primary: 17 24 39;      /* より濃いグレー（コントラスト比 15.3:1） */
-  --text-secondary: 21 128 61;   /* 鮮やかな緑（コントラスト比 4.8:1） */
-  --text-muted: 107 114 128;     /* グレー（コントラスト比 4.5:1） */
-  
-  /* フォーカス表示（より鮮やか） */
-  --focus-ring: 59 130 246;      /* 鮮やかな青 */
-  --focus-offset: 255 255 255;   /* 白 */
-  
-  /* ボーダー半径（和風に調整） */
-  --radius: 0.5rem;
-  
-  /* 陰影（和風に調整） */
-  --shadow-zen: 0 2px 8px rgba(88, 55, 41, 0.1);
-  --shadow-zen-lg: 0 4px 16px rgba(88, 55, 41, 0.15);
-}
-
-/* ダークモード対応 */
-.dark {
-  --zen-50: 88 55 41;
-  --zen-100: 112 72 50;
-  --zen-900: 253 252 250;
-  
-  --text-primary: 250 247 242;
-  --text-secondary: 235 241 219;
-  --text-muted: 193 154 107;
-  
-  --focus-offset: 26 29 26;
-}
-
-/* ベーススタイル（アクセシビリティ対応） */
-@layer base {
-  * {
-    @apply border-accessible-border-light;
-  }
-  
-  body {
-    @apply bg-zen-50 text-accessible-text-primary;
-    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic UI', 'Meiryo', sans-serif;
-    line-height: 1.7; /* 日本語に最適化 */
-    letter-spacing: 0.02em; /* 可読性向上 */
-  }
-  
-  /* 見出し */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic UI', 'Meiryo', sans-serif;
-    @apply text-accessible-text-primary;
-    line-height: 1.4;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-  }
-  
-  /* アクセシビリティ: フォーカス表示 */
-  :focus {
-    @apply outline-none ring-2 ring-accessible-focus-ring ring-offset-2 ring-offset-accessible-focus-offset;
-  }
-  
-  /* スクリーンリーダー専用テキスト */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-  
-  /* アクセシビリティ: 動きの抑制 */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-  }
-}
-
-/* コンポーネントスタイル */
-@layer components {
-  /* 和風ボタン（より鮮やか） */
-  .btn-zen {
-    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
-    @apply bg-good-500 text-white hover:bg-good-600 focus:bg-good-600;
-    @apply shadow-lg hover:shadow-xl;
-    @apply focus:ring-2 focus:ring-accessible-focus-ring focus:ring-offset-2;
-    min-height: 44px; /* WCAG2.2: タッチターゲットサイズ */
-    min-width: 44px;
-    transform: translateY(0);
-  }
-  
-  .btn-zen:hover {
-    transform: translateY(-2px);
-  }
-  
-  .btn-zen-outline {
-    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
-    @apply bg-transparent border-2 border-zen-500 text-zen-900;
-    @apply hover:bg-zen-100 focus:bg-zen-100;
-    @apply focus:ring-2 focus:ring-accessible-focus-ring focus:ring-offset-2;
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  .btn-zen-secondary {
-    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200;
-    @apply bg-zen-200 text-zen-900 hover:bg-zen-300 focus:bg-zen-300;
-    @apply focus:ring-2 focus:ring-accessible-focus-ring focus:ring-offset-2;
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  /* 和風カード */
-  .card-zen {
-    @apply bg-white rounded-lg shadow-zen border border-zen-200;
-    @apply p-6 transition-all duration-200;
-    @apply hover:shadow-zen-lg;
-  }
-  
-  /* 和風入力フィールド */
-  .input-zen {
-    @apply w-full px-4 py-3 rounded-lg border-2 border-zen-300;
-    @apply bg-white text-accessible-text-primary;
-    @apply focus:border-accessible-focus-ring focus:ring-0;
-    @apply placeholder:text-accessible-text-muted;
-    min-height: 44px; /* WCAG2.2: タッチターゲットサイズ */
-  }
-  
-  /* 和風テキストエリア */
-  .textarea-zen {
-    @apply w-full px-4 py-3 rounded-lg border-2 border-zen-300;
-    @apply bg-white text-accessible-text-primary;
-    @apply focus:border-accessible-focus-ring focus:ring-0;
-    @apply placeholder:text-accessible-text-muted;
-    min-height: 88px; /* 2行分のタッチターゲット */
-    resize: vertical;
-  }
-  
-  /* 和風ラベル */
-  .label-zen {
-    @apply text-sm font-medium text-accessible-text-secondary mb-2 block;
-    line-height: 1.4;
-  }
-  
-  /* 和風ヘッダー */
-  .header-zen {
-    @apply bg-zen-100 border-b border-zen-200 shadow-zen;
-  }
-  
-  /* 和風タイトル */
-  .title-zen {
-    @apply text-2xl font-bold text-accessible-text-primary;
-    font-family: 'Noto Sans JP', sans-serif;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-  }
-  
-  /* 和風サブタイトル */
-  .subtitle-zen {
-    @apply text-lg font-semibold text-accessible-text-secondary;
-    font-family: 'Noto Sans JP', sans-serif;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-  }
-  
-  /* アクセシビリティ: 高コントラストリンク */
-  .link-zen {
-    @apply text-indigo-600 underline hover:text-indigo-700;
-    @apply focus:outline-none focus:ring-2 focus:ring-accessible-focus-ring;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 2px;
-  }
-}
-
-/* ユーティリティクラス */
-@layer utilities {
-  /* 和風グラデーション */
-  .bg-gradient-zen {
-    background: linear-gradient(135deg, rgb(var(--zen-50)) 0%, rgb(var(--zen-100)) 100%);
-  }
-  
-  .bg-gradient-good {
-    background: linear-gradient(135deg, rgb(var(--good-50)) 0%, rgb(var(--good-100)) 100%);
-  }
-  
-  /* 和風テキスト陰影 */
-  .text-shadow-zen {
-    text-shadow: 0 1px 2px rgba(88, 55, 41, 0.1);
-  }
-  
-  /* アクセシビリティ: 可視化補助 */
-  .focus-visible-zen {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accessible-focus-ring focus-visible:ring-offset-2;
-  }
-  
-  /* 和風動画処理無効化 */
-  .motion-safe-zen {
-    @apply motion-safe:transition-all motion-safe:duration-200;
-  }
-}
-
 @layer base {
   :root {
+    /* shadcn/ui CSS variables */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%;
-    --radius: 0.5rem;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+    
+    /* Apple-style CSS variables */
+    --apple-bg: 255 255 255;
+    --apple-bg-secondary: 245 245 247;
+    --apple-bg-tertiary: 251 251 253;
+    --apple-text: 28 28 30;
+    --apple-text-secondary: 134 134 139;
+    --apple-text-tertiary: 174 174 178;
+    --apple-border: 210 210 215;
+    --apple-border-light: 232 232 237;
+    --apple-blue: 0 113 227;
+    --apple-green: 48 209 88;
+    --apple-red: 255 59 48;
+    --apple-orange: 255 149 0;
+    --apple-purple: 175 82 222;
+    --apple-pink: 255 45 85;
+    --apple-teal: 0 199 190;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* shadcn/ui dark mode variables */
+    --background: 240 10% 3.9%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 240 10% 3.9%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 240 10% 3.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 355.7 100% 97.3%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
@@ -276,25 +64,93 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 142 76% 36%;
+    --ring: 224.3 76.3% 48%;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* shadcn/ui dark mode variables */
+      --background: 240 10% 3.9%;
+      --foreground: 210 40% 98%;
+      --card: 240 10% 3.9%;
+      --card-foreground: 210 40% 98%;
+      --popover: 240 10% 3.9%;
+      --popover-foreground: 210 40% 98%;
+      --primary: 217.2 91.2% 59.8%;
+      --primary-foreground: 222.2 47.4% 11.2%;
+      --secondary: 217.2 32.6% 17.5%;
+      --secondary-foreground: 210 40% 98%;
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
+      --accent: 217.2 32.6% 17.5%;
+      --accent-foreground: 210 40% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 40% 98%;
+      --border: 217.2 32.6% 17.5%;
+      --input: 217.2 32.6% 17.5%;
+      --ring: 224.3 76.3% 48%;
+      
+      --apple-bg: 0 0 0;
+      --apple-bg-secondary: 28 28 30;
+      --apple-bg-tertiary: 44 44 46;
+      --apple-text: 255 255 255;
+      --apple-text-secondary: 142 142 147;
+      --apple-text-tertiary: 99 99 102;
+      --apple-border: 58 58 60;
+      --apple-border-light: 48 48 50;
+      --apple-blue: 10 132 255;
+      --apple-green: 52 199 89;
+      --apple-red: 255 69 58;
+      --apple-orange: 255 159 10;
+      --apple-purple: 191 90 242;
+      --apple-pink: 255 100 130;
+      --apple-teal: 90 200 250;
+    }
   }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: 'kern' 1;
+    font-kerning: normal;
   }
 }
 
-@layer components {
-  .animate-fade-in {
-    @apply animate-fade-in;
+
+@layer utilities {
+  /* Apple-style utilities */
+  .will-change-transform {
+    will-change: transform;
   }
-  
-  .animate-scale-in {
-    @apply animate-scale-in;
+
+  .perspective-1000 {
+    perspective: 1000px;
   }
-} 
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  /* Smooth scroll */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  /* iOS-style scroll */
+  .scroll-ios {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+
+  .scroll-ios > * {
+    scroll-snap-align: start;
+  }
+}
