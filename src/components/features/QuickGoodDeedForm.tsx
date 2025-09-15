@@ -16,7 +16,7 @@ interface QuickGoodDeedFormProps {
     id: string
     title: string
     description: string | null
-  }
+  } | undefined
   recommendations?: {
     id: string
     title: string
@@ -197,9 +197,9 @@ export function QuickGoodDeedForm({ todayActivity, template, recommendations = [
                       {currentTemplate.description && (
                         <p className="text-sm text-good-700 mb-3">{currentTemplate.description}</p>
                       )}
-                      {'category' in currentTemplate && currentTemplate.category && (
+                      {'category' in currentTemplate && (currentTemplate as any).category && (
                         <p className="text-xs text-good-600 mb-3">
-                          カテゴリ: {currentTemplate.category}
+                          カテゴリ: {(currentTemplate as any).category}
                         </p>
                       )}
                     </div>

@@ -10,8 +10,6 @@ import { QuickGoodDeedForm } from '@/components/features/QuickGoodDeedForm';
 import { StreakDisplay } from '@/components/features/StreakDisplay';
 import { Button } from '@/components/ui/Button-zen';
 import { QRCodeDisplay } from '@/components/dev/QRCode';
-import { Calendar } from '@/components/ui/Calendar';
-import { format, parseISO } from 'date-fns';
 
 const DashboardPage: FC = () => {
   const router = useRouter();
@@ -138,7 +136,11 @@ const DashboardPage: FC = () => {
             <div className="flex justify-center">
               <QuickGoodDeedForm
                 todayActivity={todayActivity}
-                template={dailyTemplate || undefined}
+                template={dailyTemplate ? {
+                  id: dailyTemplate.id,
+                  title: dailyTemplate.title,
+                  description: dailyTemplate.description
+                } : undefined}
                 recommendations={recommendations}
                 onSubmit={handleFormSubmit}
                 isLoading={goodDeedsLoading}

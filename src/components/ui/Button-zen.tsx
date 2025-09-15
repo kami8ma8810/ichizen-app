@@ -70,7 +70,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button"
     
     // アクセシビリティ警告
-    if (React.isValidElement(children) && !ariaLabel && !props['aria-describedby'] && !children.props?.children) {
+    if (React.isValidElement(children) && !ariaLabel && !props['aria-describedby'] && !(children.props as any)?.children) {
       console.warn('Button: アイコンのみのボタンには aria-label または aria-describedby を指定してください')
     }
     

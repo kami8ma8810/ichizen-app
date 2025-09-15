@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { FC } from 'react';
-import { auth } from '@/lib/firebase';
+import { getFirebaseAuth } from '@/lib/firebase';
 import { validateFirebaseConfig } from '@/config/firebase';
 import type { User } from 'firebase/auth';
 
@@ -34,6 +34,7 @@ const TestFirebasePage: FC = () => {
     }
 
     // Firebase Auth接続確認
+    const auth = getFirebaseAuth();
     const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
       if (user) {
         setAuthStatus(`ログイン済み: ${user.email || 'Anonymous'}`);
