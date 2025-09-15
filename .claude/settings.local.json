@@ -37,7 +37,10 @@
       "Bash(curl:*)",
       "Bash(cp:*)",
       "Bash(git add:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "WebSearch",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
