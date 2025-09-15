@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button-zen'
-import { Lightbulb, Plus, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Plus, Sparkles } from 'lucide-react'
+// import { Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react' // 今日のおすすめ機能用
 
 interface QuickGoodDeedFormProps {
   todayActivity?: {
@@ -35,12 +36,12 @@ const moods = [
   { value: 'BAD', label: '微妙', emoji: '😞', color: 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100 hover:border-orange-300' }
 ]
 
-export function QuickGoodDeedForm({ todayActivity, template, recommendations = [], onSubmit, isLoading = false }: QuickGoodDeedFormProps) {
+export function QuickGoodDeedForm({ todayActivity, template: _template, recommendations: _recommendations = [], onSubmit, isLoading = false }: QuickGoodDeedFormProps) {
   const [title, setTitle] = useState('')
   const [note, setNote] = useState('')
   const [mood, setMood] = useState('GOOD')
-  const [showSuggestion, setShowSuggestion] = useState(false)
-  const [currentRecommendationIndex, setCurrentRecommendationIndex] = useState(0)
+  // const [showSuggestion, setShowSuggestion] = useState(false) // 今日のおすすめ機能用
+  // const [currentRecommendationIndex, setCurrentRecommendationIndex] = useState(0) // 今日のおすすめ機能用
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,22 +53,25 @@ export function QuickGoodDeedForm({ todayActivity, template, recommendations = [
     setMood('GOOD')
   }
 
-  const handleSuggestionClick = (selectedTemplate?: typeof template) => {
+  // 今日のおすすめ機能用
+  /* const handleSuggestionClick = (selectedTemplate?: typeof template) => {
     const targetTemplate = selectedTemplate || getCurrentRecommendation()
     if (targetTemplate) {
       setTitle(targetTemplate.title)
       setShowSuggestion(false)
     }
-  }
+  } */
 
-  const getCurrentRecommendation = () => {
+  // 今日のおすすめ機能用
+  /* const getCurrentRecommendation = () => {
     if (recommendations.length > 0) {
       return recommendations[currentRecommendationIndex]
     }
     return template
-  }
+  } */
 
-  const goToNextRecommendation = () => {
+  // 今日のおすすめ機能用
+  /* const goToNextRecommendation = () => {
     if (recommendations.length > 0) {
       setCurrentRecommendationIndex((prev) => (prev + 1) % recommendations.length)
     }
@@ -77,7 +81,7 @@ export function QuickGoodDeedForm({ todayActivity, template, recommendations = [
     if (recommendations.length > 0) {
       setCurrentRecommendationIndex((prev) => (prev - 1 + recommendations.length) % recommendations.length)
     }
-  }
+  } */
 
   // 既に完了している場合の表示
   if (todayActivity) {
@@ -145,8 +149,8 @@ export function QuickGoodDeedForm({ todayActivity, template, recommendations = [
               )}
             </div>
             
-            {/* 提案ボタン */}
-            {(template || recommendations.length > 0) && !showSuggestion && title.length === 0 && (
+            {/* 提案ボタン - 一旦非表示 */}
+            {/* {(template || recommendations.length > 0) && !showSuggestion && title.length === 0 && (
               <button
                 type="button"
                 onClick={() => setShowSuggestion(!showSuggestion)}
@@ -155,10 +159,10 @@ export function QuickGoodDeedForm({ todayActivity, template, recommendations = [
                 <Lightbulb className="w-4 h-4" />
                 今日のおすすめを見る ({recommendations.length > 0 ? recommendations.length : 1}個)
               </button>
-            )}
+            )} */}
             
-            {/* 提案表示 */}
-            {showSuggestion && (
+            {/* 提案表示 - 一旦非表示 */}
+            {/* {showSuggestion && (
               <div className="mt-3 bg-gradient-good rounded-lg p-4 border border-good-200">
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-sm text-good-700 font-medium">💡 今日のおすすめ</p>
@@ -223,7 +227,7 @@ export function QuickGoodDeedForm({ todayActivity, template, recommendations = [
                   </button>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* 気分選択 */}

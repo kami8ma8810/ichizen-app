@@ -117,7 +117,8 @@ export function useGoodDeeds(userId: string | null) {
 
   // 初期化
   useEffect(() => {
-    fetchDailyTemplate()
+    // 今日のおすすめ機能は一旦非表示
+    // fetchDailyTemplate()
     fetchRecommendations()
   }, [])
 
